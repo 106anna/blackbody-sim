@@ -26,7 +26,7 @@ peak_wave_nm = (2.898e-3 / temp_k) * 1e9
 st.subheader("📊 實驗數據分析")
 col1, col2 = st.columns(2)
 with col1:
-    st.metric("坡峰波長 (Peak)", f"{peak_wave_nm:.1f} nm")
+    st.metric("波峰波長 (Peak)", f"{peak_wave_nm:.1f} nm")
     st.write(f"**總輻射強度:** \n {total_intensity:.2e} W/m²")
 with col2:
     st.metric("相對於太陽比值", f"{ratio_to_sun:.3f} 倍")
