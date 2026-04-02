@@ -1,0 +1,64 @@
+import streamlit as st
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 設定網頁標題與說明
+st.title("黑體輻射光譜互動模擬器 (HW08 輔助教材)")
+st.write("透過調整溫度，觀察電磁波譜的分佈變化，並理解為何白熾燈泡效率低落 [cite: 59]。")
+
+# 物理常數
+h = 6.626e-34
+c = 3.0e8
+kB = 1.38e-23
+
+def planck_law(wavelength, temp_c):
+    T = temp_c + 273.15  # 攝氏轉絕對溫度 [cite: 54, 56]
+    a = 2.0 * h * c**2
+    b = (h * c) / (wavelength * kB * T)
+    return a / (wavelength**5 * (np.exp(b) - 1))
+
+# 側邊欄：控制參數
+st.sidebar.header("實驗參數設定")
+temp_input = st.sidebar.slider("選擇溫度 (°C)", 1000, 20000, 5800, step=100)
+
+# 計算資料
+wavelengths = np.linspace(100e-9, 3000e-9, 1000) 
+intensity = planck_law(wavelengths, temp_input)
+
+# 計算維恩位移 (Wien's Law) 峰值波長
+peak_wavelength_nm = (2.898e-3 / (temp_input + 273.15)) * 1e9
+
+# 繪圖
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(wavelengths * 1e9, intensity, color='black', lw=2, label=f'{temp_input}°C Spectrum')
+
+# 標示可見光區域 (400nm - 700nm)
+ax.axvspan(400, 700, color='yellow', alpha=0.3, label='Visible Light [cite: 16]')
+ax.axvline(peak_wavelength_nm, color='red', linestyle='--', label=f'Peak: {peak_wavelength_nm:.1f} nm')
+
+ax.set_xlabel('Wavelength (nm)')
+ax.set_ylabel('Spectral Radiance (Power Density)')
+ax.set_title(f'Blackbody Spectrum at {temp_input}°C')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+# 顯示圖表
+st.pyplot(fig)
+
+# 教學資訊區
+st.info(f"💡 **觀察重點：** 當溫度為 {temp_input}°C 時，峰值波長位於 {peak_wavelength_nm:.1f} nm。")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.write("### 恆星與燈泡 [cite: 51, 57]")
+    if temp_input < 3000:
+        st.warning("此溫度接近燈泡運作溫度，可見光能量比例極低  。")
+    elif 5000 <= temp_input <= 6500:
+        st.success("此溫度接近太陽，峰值位於可見光區 [cite: 3, 55] 。")
+    else:
+        st.info("此溫度極高，大部分能量以紫外光形式發散  。")
+
+with col2:
+    st.write("### 物理規律")
+    st.write("- **維恩位移**：溫度越高，峰值越往短波長移動 [cite: 53, 55]。")
+    st.write("- **能量總量**：溫度上升時，曲線下方總面積（總功率）會劇烈增加 [cite: 67, 72]。")
