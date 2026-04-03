@@ -24,7 +24,7 @@ ratio_to_sun = total_intensity / P_sun
 peak_wave_nm = (2.898e-3 / temp_k) * 1e9
 
 # 3. 顯示中文數據分析 (這部分不會亂碼)
-st.subheader("📊 實驗數據分析")
+st.subheader("📊 模擬結果")
 col1, col2 = st.columns(2)
 with col1:
     st.metric("波峰波長 (Peak)", f"{peak_wave_nm:.1f} nm")
